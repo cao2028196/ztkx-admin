@@ -1,0 +1,69 @@
+.add-user {
+    display: flex;
+    min-height: 50vh;
+    .add-user-item {
+        .add-user-search {
+            max-width: 527px;
+            // .ant-input-affix-wrapper {
+            //     height: 36px;
+            //     background: #f7f7f7;
+            //     border-radius: 6px;
+            //     border: 1px solid #c6c6c6;
+            //     input {
+            //         background: #f7f7f7;
+            //         font-size: 16px;
+            //     }
+            // }
+        }
+        .add-user-result {
+            margin-top: 40px;
+            max-height: 720px;
+            overflow-y: auto;
+            > div {
+                margin-bottom: 12px;
+                .add-user-result-phone {
+                    margin-left: 22px;
+                    display: inline-block;
+                    width: 100px;
+                    text-align: left;
+                }
+                .add-user-result-name {
+                    margin-left: 20px;
+                    display: inline-block;
+                    width: 100px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    vertical-align: middle;
+                }
+            }
+        }
+        .add-user-select {
+            height: 36px;
+            line-height: 36px;
+            background: #f7f7f7;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 40px;
+            padding-left: 24px;
+        }
+    }
+}
+
+.team-user-delete {
+    cursor: pointer;
+}
+
+.team-add-select {
+    .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+        border-color: #c9c9c9;
+    }
+    // .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+    //     .ant-select-selector {
+    //     border-color: #000000;
+    // }
+}
+.ant-modal-body {
+    overflow: auto;
+}
