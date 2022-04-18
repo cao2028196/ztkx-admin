@@ -11,7 +11,7 @@ export class Client {
     private _host: string;
     private _prefix: string;
 
-    constructor(host, prefix) {
+    constructor(host: string, prefix: string) {
         this._host = host;
         this._prefix = prefix === '' ? '/' : prefix;
     }

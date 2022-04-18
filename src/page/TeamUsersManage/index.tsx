@@ -35,7 +35,7 @@ type editorAction = {
 const SpaceUsers = () => {
     const {search, state} = useLocation()
     const team_id = search.split(':')[1]
-    const team = {team_id}
+    const team: any = {team_id}
     const [data, setData] = useState([]);
     // const [roles, setRoles] = useState([]);
     const [teamUserVisible, setTeamUserVisible] = useState(false);
@@ -165,7 +165,7 @@ const SpaceUsers = () => {
             ),
         },
     ];
-    const editorUser = (record: SetStateAction<editorAction>) => {
+    const editorUser = (record: any) => {
         if (record.role === 100) {
             Message.info('不可编辑');
             return;

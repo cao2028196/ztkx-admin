@@ -1,5 +1,5 @@
 import { Table, Input, Button, Select, Message, Modal, Form } from '@arco-design/web-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import './index.less';
 import noteService from '../../../service/note';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ function AddTeam({ ...props }) {
     const n = 10;
     let onScrollLoad = true;
     
-    const onSubmit = async (v) => {
+    const onSubmit = async (v: { perm: string; name: any; uid: any; }) => {
         // const param = { type: 'public', ...v };
         const perm = v.perm === 'aa' ? '' : v.perm;
         props.setVisible(false)
@@ -38,7 +38,7 @@ function AddTeam({ ...props }) {
         }
     };
 
-    const onSearchUsers = async (keyword) => {
+    const onSearchUsers = async (keyword: SetStateAction<string> | undefined = '') => {
         setUserList([]);
         setKeyword(keyword);
         const {code, data} = await noteService.userSearch({ p: 1, n, keyword });
@@ -47,7 +47,7 @@ function AddTeam({ ...props }) {
         }
     };
 
-    const popupScrollHandler = async (el) => {
+    const popupScrollHandler = async (el: { scrollTop: any; scrollHeight: any; clientHeight: any; }) => {
         const { scrollTop, scrollHeight, clientHeight } = el;
         const scrollBottom = scrollHeight - (scrollTop + clientHeight);
         if (scrollBottom < 10 && onScrollLoad) {
@@ -127,7 +127,7 @@ function AddTeam({ ...props }) {
                         onSearch={onSearchUsers}
                         getPopupContainer={(node) => node}
                     >
-                        {userList?.map((d) => (
+                        {userList?.map((d:any) => (
                             <Option key={d.uid} value={d.uid}>
                                 {d.name}
                             </Option>))}

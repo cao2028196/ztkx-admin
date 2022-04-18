@@ -17,7 +17,7 @@ function AddTeamUser({ team, ...props }) {
         window.open('https://file1.kxsz.net/note/team.xlsx');
     };
 
-    const onUpload = async (files) => {
+    const onUpload = async (files:any) => {
         console.log(files)
         if (files[0].status === 'uploading') {
             const formData = new FormData();
@@ -66,14 +66,13 @@ function AddTeamUser({ team, ...props }) {
                 onCancel={() => {
                     props.setVisible(false);
                 }}
-                onOk={null}
                 style={{ width: '612px' }}
             >
                 <div>
                     <Upload
                         drag
                         limit={1}
-                        fileList={null}
+                        fileList={[]}
                         onChange={onUpload}
                         accept=".xlsx"
                         // action="/teamMemberMulti"

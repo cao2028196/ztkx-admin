@@ -59,7 +59,7 @@ const SpaceUsers = () => {
             p: page,
         });
         if (res.code === 0 && res?.data?.list) {
-            const arr = res.data.list.map((d) => {
+            const arr = res.data.list.map((d: { profile: { school_name: any; specialty_name: any; position_name: any; }; }) => {
                 return {
                     ...d,
                     school_name: d.profile?.school_name,
@@ -78,7 +78,7 @@ const SpaceUsers = () => {
     };
 
 
-    const onChangeTable = async (pagination) => {
+    const onChangeTable = async (pagination: { current: any; pageSize: any; }) => {
         const { current, pageSize } = pagination;
         setPage(current);
     };
@@ -86,7 +86,7 @@ const SpaceUsers = () => {
     const columns = [
         {
             title: '序号',
-            render: (col, item, index) => {
+            render: (col: any, item: any, index: any) => {
                 return index
             }
         },
@@ -94,7 +94,7 @@ const SpaceUsers = () => {
             title: '团队名称',
             dataIndex: 'name',
             width: 300,
-            render: (col, record) => {
+            render: (col: any, record: { name: any; }) => {
                 const text = record?.name;
                 return (
                     <Tooltip position="top" trigger="hover" content={text}>
@@ -123,14 +123,14 @@ const SpaceUsers = () => {
         {
             title: '团队成员数',
             dataIndex: 'total',
-            render: (col, record) => {
+            render: (col: any, record: { team_id: any; total: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
                 return <div style={{cursor: 'pointer', color: '#0675DB'}} onClick={() => navigate(`/team-users?team_id:${record.team_id}`, {state: record})}>{record.total}</div>
             }
         },
         {
             title: '操作',
             dataIndex: 'op',
-            render: (col, record) => (
+            render: (col: any, record: any) => (
                 <div className="option-btn">
                     {/* <span className="option-btn-normal" onClick={() => editorTeam(record)}>
                         编辑
@@ -141,7 +141,7 @@ const SpaceUsers = () => {
         },
     ];
 
-    const transferTeam = async (record) => {
+    const transferTeam = async (record: React.SetStateAction<{}>) => {
         setTransferVisible(true);
         setTransferAction(record);
     };
