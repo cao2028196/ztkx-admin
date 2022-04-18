@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import {
     Input,
     Select,
@@ -10,6 +10,7 @@ import {
     Spin,
     Tooltip,
 } from '@arco-design/web-react';
+import { useLocation } from 'react-router-dom';
 import { TeamAvatar } from '../../components/Avatar';
 import noteService from '../../service/note';
 import AddTeamUser from '../components/AddTeamUser';
@@ -19,6 +20,7 @@ import './index.less';
 // import { useCurrentTeam } from '@/hooks/useCurrentTeam';
 // import { useUserContextValue } from '@/layout/WorkspaceLayout/contexts';
 const Option = Select.Option;
+const roles = [{"key":200,"value":"管理员"},{"key":300,"value":"普通成员"}]
 
 type editorAction = {
     identity_name?: string;
@@ -31,14 +33,11 @@ type editorAction = {
     user_id?: string;
 };
 const SpaceUsers = () => {
-    // const { user } = useUserContextValue();
-    // const { team } = useCurrentTeam(user);
-    const user = {}
-    const team = {}
-
-
+    const {search, state} = useLocation()
+    const team_id = search.split(':')[1]
+    const team = {team_id}
     const [data, setData] = useState([]);
-    const [roles, setRoles] = useState([]);
+    // const [roles, setRoles] = useState([]);
     const [teamUserVisible, setTeamUserVisible] = useState(false);
     const [teamUsersVisible, setTeamUsersVisible] = useState(false);
     const [editorVisible, setEditorVisible] = useState(false);
@@ -48,12 +47,6 @@ const SpaceUsers = () => {
     const [role, setRole] = useState();
     const [editorRole, setEditorRole] = useState();
     const [editorAction, setEditorAction] = useState<editorAction>({ user_id: '' });
-    // const [currentSpace, setCurrentSpace] = useState({
-    //     name: '',
-    //     icon_name: '',
-    //     icon: '',
-    //     role: 100,
-    // });
     const [pagination, setPagination] = useState({
         total: 0,
         pageSize: 10,
@@ -61,31 +54,28 @@ const SpaceUsers = () => {
     });
 
     useEffect(() => {
-        if (team) getTeamUserList();
-    }, [team, page]);
+        if (team_id) getTeamUserList();
+    }, [team_id, page]);
 
     useEffect(() => {
-        getTeamRoles();
+        // getTeamList();
     }, []);
 
-    const getTeamRoles = async () => {
-        const res = await noteService.getTeamRoles();
-        if (res.code === 0) {
-            setRoles(res.data.list);
-        }
-    };
+    // const getTeamRoles = async () => {
+    //     const res = await noteService.getTeamRoles();
+    //     if (res.code === 0) {
+    //         setRoles(res.data.list);
+    //     }
+    // };
 
     const getTeamUserList = async () => {
-        const res = await noteService.getTeamMemberList({
-            teamId: team.team_id,
+        const res = await noteService.teamMemberList({
             n: 10,
             p: page,
-            phone,
-            nick,
-            role,
+            team_id: team_id
         });
         if (res.code === 0 && res?.data?.list) {
-            const arr = res.data.list.map((d) => {
+            const arr = res.data.list.map((d: any) => {
                 return {
                     ...d,
                     school_name: d.profile?.school_name,
@@ -103,7 +93,7 @@ const SpaceUsers = () => {
         return res;
     };
 
-    const onChangeTable = async (pagination) => {
+    const onChangeTable = async (pagination: any) => {
         const { current, pageSize } = pagination;
         setPage(current);
     };
@@ -125,36 +115,36 @@ const SpaceUsers = () => {
             title: '邀请人',
             dataIndex: 'inviter',
         },
-        {
-            title: '身份',
-            dataIndex: 'identity_name',
-        },
-        {
-            title: '学校',
-            dataIndex: 'school_name',
-        },
-        {
-            title: '专业',
-            dataIndex: 'specialty_name',
-            width: 300,
-            render: (col, record) => {
-                const text = record?.specialty_name?.join(', ');
-                return (
-                    <Tooltip position="top" trigger="hover" content={text}>
-                        <div
-                            style={{
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                width: '350px',
-                            }}
-                        >
-                            {text}
-                        </div>
-                    </Tooltip>
-                );
-            },
-        },
+        // {
+        //     title: '身份',
+        //     dataIndex: 'identity_name',
+        // },
+        // {
+        //     title: '学校',
+        //     dataIndex: 'school_name',
+        // },
+        // {
+        //     title: '专业',
+        //     dataIndex: 'specialty_name',
+        //     width: 300,
+        //     render: (col, record) => {
+        //         const text = record?.specialty_name?.join(', ');
+        //         return (
+        //             <Tooltip position="top" trigger="hover" content={text}>
+        //                 <div
+        //                     style={{
+        //                         textOverflow: 'ellipsis',
+        //                         whiteSpace: 'nowrap',
+        //                         overflow: 'hidden',
+        //                         width: '350px',
+        //                     }}
+        //                 >
+        //                     {text}
+        //                 </div>
+        //             </Tooltip>
+        //         );
+        //     },
+        // },
         {
             title: '权限',
             dataIndex: 'role_name',
@@ -163,52 +153,39 @@ const SpaceUsers = () => {
         {
             title: '操作',
             dataIndex: 'op',
-            render: (col, record) => (
+            render: (col: any, record: any) => (
                 <div className="option-btn">
                     <span className="option-btn-normal" onClick={() => editorUser(record)}>
                         编辑
                     </span>
-                    <Popconfirm title="确定要从团队删除此成员?" onOk={() => removeRow(record)}>
+                    {/* <Popconfirm title="确定要从团队删除此成员?" onOk={() => removeRow(record)}>
                         <span className="option-btn-delete">移除</span>
-                    </Popconfirm>
-                    {/* <Dropdown
-                        droplist={
-                            <Menu>
-                                <Menu.Item key="1" onClick={() => removeRow(record)}>
-                                    移除
-                                </Menu.Item>
-                            </Menu>
-                        }
-                        trigger="click"
-                        position="br"
-                    >
-                        <i className="keenote icon-keenote-more-fill" />
-                    </Dropdown> */}
+                    </Popconfirm> */}
                 </div>
             ),
         },
     ];
-    const editorUser = (record) => {
+    const editorUser = (record: SetStateAction<editorAction>) => {
         if (record.role === 100) {
             Message.info('不可编辑');
-            return;
-        }
-        if (team.role >= record.role) {
-            Message.info('您没有修改权限');
             return;
         }
         setEditorVisible(true);
         setEditorRole(record.role);
         setEditorAction(record);
     };
-    const removeRow = async (record) => {
-        const res = await noteService.teamMemberRemove({
-            team_id: team.team_id,
-            uid: record.user_id,
-        });
-        getTeamUserList();
-        Message.info(res.msg);
-    };
+    // const removeRow = async (record) => {
+    //     if (record.role === 100) {
+    //         Message.info('不可移除');
+    //         return;
+    //     }
+    //     const res = await noteService.teamMemberRemove({
+    //         team_id: team.team_id,
+    //         uid: record.user_id,
+    //     });
+    //     getTeamUserList();
+    //     Message.info(res.msg);
+    // };
 
     const submitEditor = async () => {
         const res = await noteService.teamMemberModify({
@@ -231,17 +208,15 @@ const SpaceUsers = () => {
             <div className="space-page-title">成员管理</div>
                 <div className="space-name">
                     <div className="space-name-pic">
-                         {team && (
                             <TeamAvatar
                                 size={36}
-                                src={team?.icon}
-                                alt={team?.icon_name}
-                                id={team?.team_id}
+                                src={state?.icon}
+                                alt={state?.name}
+                                id={state?.team_id}
                                 className="team-avatar"
                             />
-                        )}
                     </div>
-                    <div>{team?.name}</div>
+                    <div>{state?.name}</div>
                 </div>
 
                 <div className="space-block-title">成员列表</div>
@@ -256,7 +231,7 @@ const SpaceUsers = () => {
                                 批量添加
                             </Button>
                         </div>
-                        <div className="space-user-form-list">
+                        {/* <div className="space-user-form-list">
                             <div>
                                 <span>手机号</span>
                                 <span>
@@ -304,7 +279,7 @@ const SpaceUsers = () => {
                                     搜索
                                 </Button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="space-user-list">
                         <Table
@@ -358,7 +333,7 @@ const SpaceUsers = () => {
                             <Input value={editorAction.inviter} disabled />
                         </div>
                     </div>
-                    <div className="team-user-item">
+                    {/* <div className="team-user-item">
                         <div className="team-user-item-title">身份</div>
                         <div className="team-user-item-content">
                             <Input value={editorAction.identity_name} disabled />
@@ -375,7 +350,7 @@ const SpaceUsers = () => {
                         <div className="team-user-item-content">
                             <Input value={editorAction.specialty_name} disabled />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="team-user-item">
                         <div className="team-user-item-title">权限</div>
                         <div className="team-user-item-content">

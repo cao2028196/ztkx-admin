@@ -2,11 +2,15 @@ import { Table, Input, Checkbox, Select, Message, Modal, Tooltip } from '@arco-d
 import { useState, useEffect } from 'react';
 // import { memberAdd, userSearch } from 'services/team';
 import './index.less';
-// import noteService from '../../../../service/note';
+import noteService from '../../../service/note';
 // import passport from '../../../../service/passport';
 // import KXModal from 'components/KXModal';
 
 const { Option } = Select;
+const roleList = [
+    {"key":200,"value":"管理员"},
+    {"key":300,"value":"普通成员"}
+]
 
 function AddTeamUser({ team, ...props }) {
     const [searchText, setSearchText] = useState('');
@@ -21,8 +25,8 @@ function AddTeamUser({ team, ...props }) {
         },
         {
             title: '成员昵称',
-            dataIndex: 'nick',
-            key: 'nick',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: '权限',
@@ -35,7 +39,7 @@ function AddTeamUser({ team, ...props }) {
                     style={{ width: 100 }}
                     onChange={(val) => selectRole(record, val)}
                 >
-                    {props.roleList.map((d) => (
+                    {roleList.map((d) => (
                         <Option key={d.key} value={d.key}>
                             {d.value}
                         </Option>
@@ -67,7 +71,7 @@ function AddTeamUser({ team, ...props }) {
     };
 
     const addUsers = async () => {
-        const res = await noteService.memberAdd(team.team_id, dataSource);
+        const res = await noteService.teamMemberAdd({team_id: team.team_id, members: dataSource});
         if (res.code === 0) {
             props.setVisible(false);
             props.getTeamUserList();
@@ -81,6 +85,8 @@ function AddTeamUser({ team, ...props }) {
                         .toString()} 邀请失败，请重新操作!`,
                     icon: <i className="icon-KX-tishiicon_16" />,
                 });
+            }else {
+                Message.success('添加成功')
             }
         }
     };
@@ -90,8 +96,8 @@ function AddTeamUser({ team, ...props }) {
         // if (!val) {
         //     return;
         // }
-        // const res = await noteService.userSearch(val, 10, 1, teamId);
-        const res = await passport.userSearch(team.team_id, 10, 1, val);
+        const res = await noteService.userSearch({p: 1, n: 20, keyword: val, team_id: team.team_id});
+        // const res = await passport.userSearch(team.team_id, 10, 1, val);
         if (res && res.code === 0) {
             const list = res.data.list || [];
             for (let i = 0, len = list.length; i < len - 1; i++) {
@@ -181,8 +187,8 @@ function AddTeamUser({ team, ...props }) {
                                     onChange={(value) => onCheck(value, d)}
                                 >
                                     <span className="add-user-result-phone">{d.phone}</span>
-                                    <Tooltip content={d.nick}>
-                                        <span className="add-user-result-name">{d.nick}</span>
+                                    <Tooltip content={d.name}>
+                                        <span className="add-user-result-name">{d.name}</span>
                                     </Tooltip>
                                 </Checkbox>
                             </div>

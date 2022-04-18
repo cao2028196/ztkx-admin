@@ -10,16 +10,18 @@ import {
     Spin,
     Tooltip,
 } from '@arco-design/web-react';
+import { useNavigate } from 'react-router-dom';
 import noteService from '../../service/note';
-import AddTeamUser from '../components/AddTeamUser';
-import AddTeamUsers from '../components/AddTeamUsers';
+import AddTeam from '../components/AddTeam';
+import TransferTeam from '../components/TransferTeam';
+
 import './index.less';
 // import styles from './styles.module.less';
 // import { useCurrentTeam } from '@/hooks/useCurrentTeam';
 // import { useUserContextValue } from '@/layout/WorkspaceLayout/contexts';
 const Option = Select.Option;
 
-type editorAction = {
+type transferAction = {
     identity_name?: string;
     inviter?: string;
     nick?: string;
@@ -30,29 +32,17 @@ type editorAction = {
     user_id?: string;
 };
 const SpaceUsers = () => {
-    // const { user } = useUserContextValue();
-    // const { team } = useCurrentTeam(user);
-    const user = {}
+    const navigate = useNavigate();
     const team = {}
 
 
     const [data, setData] = useState([]);
     const [roles, setRoles] = useState([]);
-    const [teamUserVisible, setTeamUserVisible] = useState(false);
-    const [teamUsersVisible, setTeamUsersVisible] = useState(false);
-    const [editorVisible, setEditorVisible] = useState(false);
+    const [teamVisible, setTeamVisible] = useState(false);
+    const [transferVisible, setTransferVisible] = useState(false);
     const [page, setPage] = useState(1);
-    const [phone, setPhone] = useState('');
-    const [nick, setNick] = useState('');
-    const [role, setRole] = useState();
-    const [editorRole, setEditorRole] = useState();
-    const [editorAction, setEditorAction] = useState<editorAction>({ user_id: '' });
-    // const [currentSpace, setCurrentSpace] = useState({
-    //     name: '',
-    //     icon_name: '',
-    //     icon: '',
-    //     role: 100,
-    // });
+    const [transferAction, setTransferAction] = useState({});
+
     const [pagination, setPagination] = useState({
         total: 0,
         pageSize: 10,
@@ -60,28 +50,13 @@ const SpaceUsers = () => {
     });
 
     useEffect(() => {
-        if (team) getTeamUserList();
-    }, [team, page]);
+        getTeamList();
+    }, [page]);
 
-    useEffect(() => {
-        getTeamRoles();
-    }, []);
-
-    const getTeamRoles = async () => {
-        const res = await noteService.getTeamRoles();
-        if (res.code === 0) {
-            setRoles(res.data.list);
-        }
-    };
-
-    const getTeamUserList = async () => {
-        const res = await noteService.getTeamMemberList({
-            teamId: team.team_id,
+    const getTeamList = async () => {
+        const res = await noteService.teamList({
             n: 10,
             p: page,
-            phone,
-            nick,
-            role,
         });
         if (res.code === 0 && res?.data?.list) {
             const arr = res.data.list.map((d) => {
@@ -102,42 +77,25 @@ const SpaceUsers = () => {
         return res;
     };
 
+
     const onChangeTable = async (pagination) => {
         const { current, pageSize } = pagination;
         setPage(current);
     };
 
-    const onSubmit = () => {
-        getTeamUserList();
-    };
-
     const columns = [
         {
-            title: '手机号',
-            dataIndex: 'phone',
+            title: '序号',
+            render: (col, item, index) => {
+                return index
+            }
         },
         {
-            title: '用户名',
-            dataIndex: 'nick',
-        },
-        {
-            title: '邀请人',
-            dataIndex: 'inviter',
-        },
-        {
-            title: '身份',
-            dataIndex: 'identity_name',
-        },
-        {
-            title: '学校',
-            dataIndex: 'school_name',
-        },
-        {
-            title: '专业',
-            dataIndex: 'specialty_name',
+            title: '团队名称',
+            dataIndex: 'name',
             width: 300,
             render: (col, record) => {
-                const text = record?.specialty_name?.join(', ');
+                const text = record?.name;
                 return (
                     <Tooltip position="top" trigger="hover" content={text}>
                         <div
@@ -155,91 +113,53 @@ const SpaceUsers = () => {
             },
         },
         {
-            title: '权限',
-            dataIndex: 'role_name',
-            editable: true,
+            title: '超管用户名',
+            dataIndex: 'nick_name',
+        },
+        {
+            title: '创建时间',
+            dataIndex: 'created_at',
+        },
+        {
+            title: '团队成员数',
+            dataIndex: 'total',
+            render: (col, record) => {
+                return <div style={{cursor: 'pointer', color: '#0675DB'}} onClick={() => navigate(`/team-users?team_id:${record.team_id}`, {state: record})}>{record.total}</div>
+            }
         },
         {
             title: '操作',
             dataIndex: 'op',
             render: (col, record) => (
                 <div className="option-btn">
-                    <span className="option-btn-normal" onClick={() => editorUser(record)}>
+                    {/* <span className="option-btn-normal" onClick={() => editorTeam(record)}>
                         编辑
-                    </span>
-                    <Popconfirm title="确定要从团队删除此成员?" onOk={() => removeRow(record)}>
-                        <span className="option-btn-delete">移除</span>
-                    </Popconfirm>
-                    {/* <Dropdown
-                        droplist={
-                            <Menu>
-                                <Menu.Item key="1" onClick={() => removeRow(record)}>
-                                    移除
-                                </Menu.Item>
-                            </Menu>
-                        }
-                        trigger="click"
-                        position="br"
-                    >
-                        <i className="keenote icon-keenote-more-fill" />
-                    </Dropdown> */}
+                    </span> */}
+                    <span className="option-btn-delete" onClick={() => transferTeam(record)}>移交</span>
                 </div>
             ),
         },
     ];
-    const editorUser = (record) => {
-        if (record.role === 100) {
-            Message.info('不可编辑');
-            return;
-        }
-        if (team.role >= record.role) {
-            Message.info('您没有修改权限');
-            return;
-        }
-        setEditorVisible(true);
-        setEditorRole(record.role);
-        setEditorAction(record);
-    };
-    const removeRow = async (record) => {
-        const res = await noteService.teamMemberRemove({
-            team_id: team.team_id,
-            uid: record.user_id,
-        });
-        getTeamUserList();
-        Message.info(res.msg);
-    };
 
-    const submitEditor = async () => {
-        const res = await noteService.teamMemberModify({
-            uid: editorAction.user_id,
-            team_id: team.team_id,
-            role: editorRole,
-        });
-
-        if (res.code === 0) {
-            setEditorVisible(false);
-            getTeamUserList();
-            Message.success(res.msg);
-        } else {
-            Message.info(res.msg);
-        }
+    const transferTeam = async (record) => {
+        setTransferVisible(true);
+        setTransferAction(record);
     };
     return (
         <div className="space-user">
             <Spin loading={team === null} style={{ width: '100%' }}>
-            <div className="space-page-title">团队管理</div>
+                <div className="space-page-title">团队管理</div>
 
-            <div className="space-block-title">团队列表</div>
-            <div className="space-user-form-list">
-                <div className="space-user-form">
-                    <div className="space-user-form-add">
-                        <Button type="primary" onClick={() => setTeamUserVisible(true)}>
-                            <i className="keenote icon-keenote-block-plus" />
-                            创建团队
-                        </Button>
-                    </div>
-               
-                        <div className="space-user-form-list">
+                <div className="space-block-title">团队列表</div>
+                <div className="space-user-form-list">
+                    <div className="space-user-form">
+                        <div className="space-user-form-add">
+                            <Button type="primary" onClick={() => setTeamVisible(true)}>
+                                <i className="keenote icon-keenote-block-plus" />
+                                创建团队
+                            </Button>
+                        </div>
+                        {/* <div className="space-user-form-list">
                             <div>
                                 <span>手机号</span>
                                 <span>
@@ -287,109 +207,30 @@ const SpaceUsers = () => {
                                     搜索
                                 </Button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="space-user-list">
                         <Table
                             data={data}
                             columns={columns}
-                            rowKey={'user_id'}
+                            rowKey={'team_id'}
                             className="table-demo-editable-cell"
                             pagination={pagination}
                             onChange={onChangeTable}
                         />
                     </div>
                 </div>
-                <AddTeamUser
-                    team={team}
-                    visible={teamUserVisible}
-                    setVisible={setTeamUserVisible}
-                    getTeamUserList={getTeamUserList}
-                    roleList={roles}
+                <AddTeam
+                    visible={teamVisible}
+                    setVisible={setTeamVisible}
+                    getTeamList={getTeamList}
                 />
-                <AddTeamUsers
-                    team={team}
-                    visible={teamUsersVisible}
-                    setVisible={setTeamUsersVisible}
-                    getTeamUserList={getTeamUserList}
+                <TransferTeam
+                    visible={transferVisible}
+                    setVisible={setTransferVisible}
+                    getTeamList={getTeamList}
+                    action={transferAction}
                 />
-                <Modal
-                    title="编辑信息"
-                    visible={editorVisible}
-                    onCancel={() => setEditorVisible(false)}
-                    footer={null}
-                    className="editor-team-user"
-                    style={{ width: '400px' }}
-                    // autoFocus={false}
-                    // focusLock={true}
-                >
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">手机号</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.phone} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">用户名</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.nick} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">邀请人</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.inviter} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">身份</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.identity_name} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">学校</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.school_name} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">专业</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.specialty_name} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">权限</div>
-                        <div className="team-user-item-content">
-                            <Select
-                                allowClear
-                                placeholder="请选择权限"
-                                style={{ height: 32 }}
-                                value={editorRole}
-                                onChange={(val) => setEditorRole(val)}
-                            >
-                                {roles.map((d) => (
-                                    <Option key={d.key} value={d.key}>
-                                        {d.value}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </div>
-                    </div>
-                    <div className="team-user-footer">
-                        <Button type="secondary" onClick={() => setEditorVisible(false)}>
-                            取消
-                        </Button>
-                        <Button
-                            type="primary"
-                            style={{ marginLeft: '16px' }}
-                            onClick={submitEditor}
-                        >
-                            保存
-                        </Button>
-                    </div>
-                </Modal>
             </Spin>
         </div>
     );

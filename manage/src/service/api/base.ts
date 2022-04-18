@@ -23,6 +23,8 @@ export class Client {
      */
     url(uri: string): string {
         uri = uri[0] === '/' ? uri : '/' + uri;
+        console.log(this._host)
+        console.log(this._prefix)
         return this._host + this._prefix + uri;
     }
 }

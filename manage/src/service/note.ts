@@ -7,4 +7,4 @@ class Note extends NoteApi {
   
 }
 
-export default new Note(baseURL.note, '/api/note');
+export default new Note(baseURL.note, '/note/admin');

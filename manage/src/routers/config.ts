@@ -1,6 +1,7 @@
 
 import TeamUsers from '../page/TeamUsersManage';
 import TeamManage from '../page/TeamManage';
+import layout from '../layout';
 
 export const FILE_MANAGE_PATH_WITHOUT_PARAMS = '/file-manege/';
 
@@ -8,19 +9,26 @@ export const WORKBENCH_PATH = '/workbench';
 
 const RouterList: Array<any> = [
     {
-        name: 'team-manage',
+        name: '团队管理',
         path: '/',
         component: TeamManage,
+        layout: layout,
+        hiddenMenu: false,
     },
     {
-        name: 'team-manage',
+        name: '团队管理',
         path: '/team-manage',
         component: TeamManage,
+        layout: layout,
+        hiddenMenu: true,
+
     },
     {
-        name: 'team-users',
+        name: '用户管理',
         path: '/team-users',
         component: TeamUsers,
+        layout: layout,
+        hiddenMenu: false,
     },
 ];
 

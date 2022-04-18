@@ -1,7 +1,6 @@
 import http from './axios';
 import { Client, JsonResponse } from './base';
 
-import { NoteAuthorizeParams } from '../typing';
 
 /**
  * Note api
@@ -10,11 +9,73 @@ import { NoteAuthorizeParams } from '../typing';
  */
 export class Note extends Client {
     /**
-     * 获取空间列表
+     * 后台登录
      * @returns
      */
-    getUserSpaces = async (): Promise<JsonResponse> => {
-        return await http.get(this.url('team/list'));
+     accountLogin = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('account/login'), JSON.stringify(params));
     };
-
+    /**
+     * 获取团队列表
+     * @returns
+     */
+     teamList = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamList'), JSON.stringify(params));
+    };
+    /**
+     * 创建团队
+     * @returns
+     */
+    teamCreate = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamCreate'), JSON.stringify(params));
+    };
+    /**
+     * 获取团队用户
+     * @returns
+     */
+    teamMemberList = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamMemberList'), JSON.stringify(params));
+    };
+    /**
+     * 移交团队
+     * @returns
+     */
+    teamTransfer = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamTransfer'), JSON.stringify(params));
+    };
+    /**
+     * 查询所有用户
+     * @returns
+     */
+    userSearch = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('user/search'), JSON.stringify(params));
+    };
+    /**
+     * 团队添加成员
+     * @returns
+     */
+     teamMemberAdd = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamMemberAdd'), JSON.stringify(params));
+    };
+    /**
+     * 团队批量添加成员
+     * @returns
+     */
+     teamMemberMulti = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamMemberMulti'), params);
+    };
+    /**
+     * 修改团队成员
+     * @returns
+     */
+     teamMemberModify = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamMemberModify'), JSON.stringify(params));
+    };
+    /**
+     * 移除团队成员
+     * @returns
+     */
+    //  teamMemberModify = async (params): Promise<JsonResponse> => {
+    //     return await http.post(this.url('teamMemberModify'), JSON.stringify(params));
+    // };
 }

@@ -8,7 +8,7 @@ const http = axios.create({
     },
 });
 
-let token = '';
+let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzZmZjYxMTQiLCJleHAiOjE2NTI1OTUzMjB9.GKHmUHfNbn7uTPHNGmhqINgqzutQ3tx01BoJM6g7N3E';
 const getToken = () => {
     try {
         token = localStorage.getItem('token') || '';
@@ -21,6 +21,7 @@ const getToken = () => {
 http.interceptors.request.use(
     (config: any) => {
         const authToken = getToken();
+        // const authToken = token;
         if (authToken) {
             config.headers.Authorization = `Bearer ${authToken}`;
         }
@@ -32,7 +33,7 @@ http.interceptors.request.use(
 );
 
 http.interceptors.response.use(
-    (resp: any) => {
+    async(resp: any) => {
         // http 状态码处理，如果不是200则都是服务器异常
         switch (resp.status) {
             case 200: {
@@ -44,6 +45,8 @@ http.interceptors.response.use(
                         }
                         case 401: {
                             console.log('需要登录');
+                            const res = await http.get('/note/admin/account/redirect')
+                            window.location.href=res.data.url
                             break;
                         }
                         default: {
