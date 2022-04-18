@@ -33,7 +33,7 @@ type editorAction = {
     user_id?: string;
 };
 const SpaceUsers = () => {
-    const {search, state} = useLocation()
+    const {search, state} = useLocation()as any
     const team_id = search.split(':')[1]
     const team: any = {team_id}
     const [data, setData] = useState([]);
