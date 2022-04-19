@@ -18,8 +18,8 @@ build:
     script:
         - yarn install
         - yarn build:${CI_COMMIT_REF_NAME}
-        - docker build -t kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
-        - docker push kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
+        - docker build -t kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker push kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
     # after_script:
     #   - docker rmi $(docker images -f dangling=true -q)
 
@@ -34,8 +34,8 @@ build_release:
     script:
         - yarn install
         - yarn build
-        - docker build -t kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
-        - docker push kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
+        - docker build -t kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker push kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
 
 deploy_develop:
     stage: deploy
@@ -49,7 +49,7 @@ deploy_develop:
         - mkdir -p /opt/${CI_PROJECT_NAME}/logs && mkdir -p /opt/${CI_PROJECT_NAME}/config
         - cp docker-compose*.yml /opt/${CI_PROJECT_NAME}/
         - cd /opt/${CI_PROJECT_NAME}
-        - docker pull kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
+        - docker pull kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
         - docker-compose down
         - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose up -d
 
@@ -65,7 +65,7 @@ deploy_test:
         - mkdir -p /opt/${CI_PROJECT_NAME}/logs && mkdir -p /opt/${CI_PROJECT_NAME}/config
         - cp docker-compose*.yml /opt/${CI_PROJECT_NAME}/
         - cd /opt/${CI_PROJECT_NAME}
-        - docker pull kexin.tencentcloudcr.com/admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
+        - docker pull kexin.tencentcloudcr.com/note-admin/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
         - docker-compose down
         - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose up -d
 #deploy_publish:
