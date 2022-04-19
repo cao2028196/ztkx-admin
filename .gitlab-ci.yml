@@ -58,8 +58,8 @@ deploy_test:
     only:
         - test
     tags:
-        - docker
-        - shell
+        - deploy
+        - qcloud
         - test
     script:
         - mkdir -p /opt/${CI_PROJECT_NAME}/logs && mkdir -p /opt/${CI_PROJECT_NAME}/config
