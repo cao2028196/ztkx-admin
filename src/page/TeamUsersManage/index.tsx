@@ -34,6 +34,7 @@ type editorAction = {
 };
 const SpaceUsers = () => {
     const {search, state} = useLocation()as any
+    console.log(state)
     const team_id = search.split(':')[1]
     const team: any = {team_id}
     const [data, setData] = useState([]);
@@ -42,9 +43,6 @@ const SpaceUsers = () => {
     const [teamUsersVisible, setTeamUsersVisible] = useState(false);
     const [editorVisible, setEditorVisible] = useState(false);
     const [page, setPage] = useState(1);
-    const [phone, setPhone] = useState('');
-    const [nick, setNick] = useState('');
-    const [role, setRole] = useState();
     const [editorRole, setEditorRole] = useState();
     const [editorAction, setEditorAction] = useState<editorAction>({ user_id: '' });
     const [pagination, setPagination] = useState({
@@ -211,7 +209,7 @@ const SpaceUsers = () => {
                             <TeamAvatar
                                 size={36}
                                 src={state?.icon}
-                                alt={state?.name}
+                                alt={state?.icon_name}
                                 id={state?.team_id}
                                 className="team-avatar"
                             />
@@ -220,7 +218,7 @@ const SpaceUsers = () => {
                 </div>
 
                 <div className="space-block-title">成员列表</div>
-                <div className="space-user-form-list">
+                <div>
                     <div className="space-user-form">
                         <div className="space-user-form-add">
                             <Button type="primary" onClick={() => setTeamUserVisible(true)}>

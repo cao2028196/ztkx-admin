@@ -6,8 +6,14 @@ import { useNavigate } from 'react-router-dom';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const options = [
+    { name: '全部成员仅可编辑查看本人创建页面', value: 'aa' },
+    { name: '全部成员可查看', value: 'r' },
+    { name: '全部成员可阅读', value: 'l' },
+    { name: '全部成员可编辑', value: 'w' },
+];
 
-function EditorTeam({ ...props }) {
+function TransferTeam({ ...props }) {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
@@ -20,7 +26,7 @@ function EditorTeam({ ...props }) {
         // const param = { type: 'public', ...v };
         const perm = v.perm === 'aa' ? '' : v.perm;
         props.setVisible(false)
-        const res = await noteService.teamTransfer({team_id: props.action.team_id, receive: v.receive, owner: props.action.uid});
+        const res = await noteService.teamModify({team_id: props.action.team_id, name: v.name});
         if (res.code === 0) {
             props.getTeamList()
             Message.success('移交团队成功');
@@ -58,12 +64,10 @@ function EditorTeam({ ...props }) {
 
     useEffect(() => {
         onSearchUsers()
-        form.resetFields()
     }, [props.action])
-
     return (
         <Modal
-            title="移交团队"
+            title="编辑团队"
             visible={props.visible}
             onCancel={() => {
                 props.setVisible(false);
@@ -73,18 +77,46 @@ function EditorTeam({ ...props }) {
         >
             <Form
                 form={form}
+                layout="vertical"
                 onSubmit={(v) => {
                     onSubmit(v);
                 }}
             >
-                <div className='team-name'>
-                    团队名称：{props.action.name}
-                </div>
-                <div>
-                    每个团队只有1位所有者，移交后原超级管理员将变为管理员
-                </div>
                 <FormItem
+                    field="name"
+                    label="团队名称"
+                    rules={[
+                        { required: true, message: '请输入团队名称' },
+                    ]}
+                    wrapperCol={{ span: 24 }}
+                    initialValue={props.action.name}
+                >
+                    <Input placeholder="请输入团队名称" />
+                </FormItem>
+
+                {/* <FormItem
+                    field="perm"
+                    label="初始页面权限"
+                    rules={[
+                        { required: true, message: '请输入初始页面权限' },
+                    ]}
+                    initialValue={props.action.perm}
+                    wrapperCol={{ span: 24 }}
+                >
+                    <Select
+                        placeholder="请选择初始页面权限"
+                    >
+                        {options.map((option) => (
+                            <Option key={option.value} value={option.value}>
+                                {option.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </FormItem> */}
+
+                {/* <FormItem
                     field="receive"
+                    label="团队名称"
                     rules={[
                         { required: true, message: '请输入团队拥有者' },
                     ]}
@@ -92,7 +124,7 @@ function EditorTeam({ ...props }) {
                 >
                     <Select
                         placeholder="请输入团队拥有者"
-                        // showSearch
+                        showSearch
                         filterOption={false}
                         onPopupScroll={popupScrollHandler}
                         onSearch={onSearchUsers}
@@ -103,7 +135,7 @@ function EditorTeam({ ...props }) {
                                 {d.nick}
                             </Option>))}
                     </Select>
-                </FormItem>
+                </FormItem> */}
                 <div className="creat-space-footer-button">
                     {/* <Button type="outline">重新选择</Button> */}
                     <Button type="primary" htmlType="submit">
@@ -115,4 +147,4 @@ function EditorTeam({ ...props }) {
     );
 }
 
-export default EditorTeam;
+export default TransferTeam;

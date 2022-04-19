@@ -44,6 +44,13 @@ export class Note extends Client {
         return await http.post(this.url('teamTransfer'), JSON.stringify(params));
     };
     /**
+     * 编辑团队
+     * @returns
+     */
+    teamModify = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamModify'), JSON.stringify(params));
+    };
+    /**
      * 查询所有用户
      * @returns
      */

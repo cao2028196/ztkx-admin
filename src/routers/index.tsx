@@ -10,7 +10,7 @@ export default function Router() {
     const {search} = useLocation()
     const navigate = useNavigate()
     const params = qs.parse(search.split('?')[1])
-    console.log(params)
+    
     useEffect(() => {
         if (!localStorage.getItem('token')) {
             login()
