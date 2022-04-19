@@ -45,7 +45,7 @@ http.interceptors.response.use(
                         }
                         case 401: {
                             console.log('需要登录');
-                            const res = await http.get('/note/admin/account/redirect')
+                            const res = await http.get('/api/admin/account/redirect')
                             window.location.href=res.data.url
                             break;
                         }
