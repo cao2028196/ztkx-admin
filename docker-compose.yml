@@ -1,7 +1,7 @@
 version: '3'
 services:
-    note-admin:
-        container_name: note-admin
+    note-admin-web:
+        container_name: note-admin-web
         image: tcr.kxsz.net/web/note-admin:${IMAGETAG}
         restart: always
         ports:
