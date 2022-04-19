@@ -135,7 +135,7 @@ function AddTeamUser({ team, ...props }) {
                             条记录
                         </div>
                         <div>
-                            <Table columns={columns} data={resultData?.errorList} />
+                            {resultData?.errorList && <Table columns={columns} data={resultData?.errorList} />}
                         </div>
                     </div>
                 )}
