@@ -5,4 +5,4 @@ services:
         image: tcr.kxsz.net/web/note-admin:${IMAGETAG}
         restart: always
         ports:
-            - '9002:80'
+            - '9004:80'
