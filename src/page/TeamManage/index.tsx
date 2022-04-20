@@ -101,7 +101,6 @@ const SpaceUsers = () => {
         {
             title: '团队名称',
             dataIndex: 'name',
-            width: 250,
             render: (col: any, record: { name: any; }) => {
                 const text = record?.name;
                 return (
@@ -111,7 +110,7 @@ const SpaceUsers = () => {
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
-                                width: '350px',
+                                maxWidth: '350px',
                             }}
                         >
                             {text}

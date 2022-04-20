@@ -12,10 +12,12 @@ const Sider = () => {
         // console.log(router)
         return router.filter(d => d.hiddenMenu).map(d => <MenuItem key={d.path}>{d.name}</MenuItem>)
     }
+    const collapsed = /mobile/i.test(navigator.userAgent)
     return (
         <div onContextMenu={(e) => e.preventDefault()}>
                 <Layout.Sider
                     className="sider"
+                    collapsed={collapsed}
                     // resizeDirections={['right']}
                 >
                     <Menu
