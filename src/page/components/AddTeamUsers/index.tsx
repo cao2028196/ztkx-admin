@@ -9,7 +9,7 @@ type result = {
     errorList?: Array<any>;
 };
 
-function AddTeamUser({ team, ...props }) {
+function AddTeamUsers({ team, ...props }) {
     const [resultVisible, setResultVisible] = useState(false);
     const [resultData, setResultData] = useState<result>({});
 
@@ -26,6 +26,10 @@ function AddTeamUser({ team, ...props }) {
             const res = await noteService.teamMemberMulti(formData);
             props.setVisible(false);
             props.getTeamUserList();
+
+            if (res.code === 2) {
+                Modal.info({ title: "", content: "" });
+            }
             if (res.code !== 0 && res.code !== 1) {
                 Modal.info({ title: `上传错误: ${res.msg}` });
                 return;
@@ -144,4 +148,4 @@ function AddTeamUser({ team, ...props }) {
     );
 }
 
-export default AddTeamUser;
+export default AddTeamUsers;

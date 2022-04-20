@@ -29,10 +29,10 @@ function TransferTeam({ ...props }) {
         const res = await noteService.teamModify({team_id: props.action.team_id, name: v.name});
         if (res.code === 0) {
             props.getTeamList()
-            Message.success('移交团队成功');
+            Message.success('编辑团队成功');
             form.resetFields()
         } else {
-            Message.error('移交团队失败');
+            Message.error('编辑团队失败');
         }
     };
 
