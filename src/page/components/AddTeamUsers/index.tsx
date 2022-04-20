@@ -28,7 +28,7 @@ function AddTeamUsers({ team, ...props }) {
             props.getTeamUserList();
 
             if (res.code === 2) {
-                Modal.info({ title: "", content: "" });
+                Modal.info({ title: "上传错误", content: "文件格式错误，请参照模板文件" });
             }
             if (res.code !== 0 && res.code !== 1) {
                 Modal.info({ title: `上传错误: ${res.msg}` });
