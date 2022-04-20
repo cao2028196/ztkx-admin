@@ -91,7 +91,10 @@ function TransferTeam({ ...props }) {
                     wrapperCol={{ span: 24 }}
                     initialValue={props.action.name}
                 >
-                    <Input placeholder="请输入团队名称" />
+                    <Input
+                        placeholder="请输入团队名称" 
+                        autoComplete="off"
+                    />
                 </FormItem>
 
                 {/* <FormItem
