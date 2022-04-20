@@ -1,5 +1,5 @@
 import { Table, Input, Checkbox, Select, Message, Modal, Tooltip } from '@arco-design/web-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 // import { memberAdd, userSearch } from 'services/team';
 import './index.less';
 import noteService from '../../../service/note';
@@ -33,7 +33,7 @@ function AddTeamUser({ team, ...props }) {
             dataIndex: 'role_name',
             key: 'role_name',
             editable: true,
-            render: (_, record) => (
+            render: (_: any, record: any) => (
                 <Select
                     defaultValue="普通成员"
                     style={{ width: 100 }}
@@ -51,7 +51,7 @@ function AddTeamUser({ team, ...props }) {
             title: '操作',
             dataIndex: 'op',
             key: 'address',
-            render: (_, record) => (
+            render: (_: any, record: any) => (
                 <span className="team-user-delete" onClick={() => userDelete(record)}>
                     移除
                 </span>
@@ -59,9 +59,9 @@ function AddTeamUser({ team, ...props }) {
         },
     ];
 
-    const selectRole = (record, val) => {
-        setDataSource((origin) =>
-            origin.map((d) => {
+    const selectRole = (record: { phone: any; }, val: any) => {
+        setDataSource((origin:any) =>
+            origin.map((d:any) => {
                 if (d.phone === record.phone) {
                     d.role = val;
                 }
@@ -81,7 +81,7 @@ function AddTeamUser({ team, ...props }) {
             if (res.data.list.length > 0) {
                 Message.info({
                     content: `团队成员 ${res.data.list
-                        .map((d) => d.phone)
+                        .map((d:any) => d.phone)
                         .toString()} 邀请失败，请重新操作!`,
                     icon: <i className="icon-KX-tishiicon_16" />,
                 });
@@ -91,7 +91,7 @@ function AddTeamUser({ team, ...props }) {
         }
     };
 
-    const onSearch = async (val) => {
+    const onSearch = async (val: SetStateAction<string>) => {
         setSearchText(val);
         // if (!val) {
         //     return;
@@ -101,7 +101,7 @@ function AddTeamUser({ team, ...props }) {
         if (res && res.code === 0) {
             const list = res.data.list || [];
             for (let i = 0, len = list.length; i < len - 1; i++) {
-                const arr = dataSource.filter((d) => d.phone === list[i].phone);
+                const arr = dataSource.filter((d:any) => d.phone === list[i].phone);
                 if (arr.length === 1) {
                     list[i].checked = true;
                 } else {
@@ -112,7 +112,7 @@ function AddTeamUser({ team, ...props }) {
         }
     };
 
-    const onCheck = (checked, data) => {
+    const onCheck = (checked:any, data) => {
         if (checked) {
             const arr = dataSource.slice();
             data.role = 300; // 默认普通用户
@@ -120,9 +120,9 @@ function AddTeamUser({ team, ...props }) {
             arr.push(data);
             setDataSource(arr);
         } else {
-            setDataSource((o) => o.filter((d) => d.phone !== data.phone));
+            setDataSource((o) => o.filter((d:any) => d.phone !== data.phone));
         }
-        const arr1 = search.map((d) => {
+        const arr1 = search.map((d:any) => {
             if (d.phone === data.phone) {
                 d.checked = checked;
             }
@@ -131,9 +131,9 @@ function AddTeamUser({ team, ...props }) {
         setSearch(arr1);
     };
 
-    const userDelete = (record) => {
-        const arr = dataSource.filter((d) => d.phone !== record.phone);
-        const arr1 = search.map((d) => {
+    const userDelete = (record:any) => {
+        const arr = dataSource.filter((d:any) => d.phone !== record.phone);
+        const arr1 = search.map((d:any) => {
             if (d.phone === record.phone) {
                 d.checked = false;
             }
@@ -179,7 +179,7 @@ function AddTeamUser({ team, ...props }) {
                             <div>手机号</div>
                             <div>昵称</div>
                         </div>
-                        {search.map((d) => (
+                        {search.map((d:any) => (
                             <div key={d.phone}>
                                 <Checkbox
                                     checked={d.disable ? true : d.checked}

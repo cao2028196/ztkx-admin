@@ -9,7 +9,7 @@ type result = {
     errorList?: Array<any>;
 };
 
-function AddTeamUser({ team, ...props }) {
+function AddTeamUsers({ team, ...props }) {
     const [resultVisible, setResultVisible] = useState(false);
     const [resultData, setResultData] = useState<result>({});
 
@@ -17,7 +17,7 @@ function AddTeamUser({ team, ...props }) {
         window.open('https://file1.kxsz.net/note/team.xlsx');
     };
 
-    const onUpload = async (files) => {
+    const onUpload = async (files:any) => {
         console.log(files)
         if (files[0].status === 'uploading') {
             const formData = new FormData();
@@ -26,6 +26,10 @@ function AddTeamUser({ team, ...props }) {
             const res = await noteService.teamMemberMulti(formData);
             props.setVisible(false);
             props.getTeamUserList();
+
+            if (res.code === 2) {
+                Modal.info({ title: "上传错误", content: "文件格式错误，请参照模板文件" });
+            }
             if (res.code !== 0 && res.code !== 1) {
                 Modal.info({ title: `上传错误: ${res.msg}` });
                 return;
@@ -66,14 +70,13 @@ function AddTeamUser({ team, ...props }) {
                 onCancel={() => {
                     props.setVisible(false);
                 }}
-                onOk={null}
                 style={{ width: '612px' }}
             >
                 <div>
                     <Upload
                         drag
                         limit={1}
-                        fileList={null}
+                        fileList={[]}
                         onChange={onUpload}
                         accept=".xlsx"
                         // action="/teamMemberMulti"
@@ -136,7 +139,7 @@ function AddTeamUser({ team, ...props }) {
                             条记录
                         </div>
                         <div>
-                            <Table columns={columns} data={resultData?.errorList} />
+                            {resultData?.errorList && <Table columns={columns} data={resultData?.errorList} />}
                         </div>
                     </div>
                 )}
@@ -145,4 +148,4 @@ function AddTeamUser({ team, ...props }) {
     );
 }
 
-export default AddTeamUser;
+export default AddTeamUsers;

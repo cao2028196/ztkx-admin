@@ -5,7 +5,7 @@ import '@arco-design/web-react/dist/css/arco.css';
 import { BrowserRouter } from 'react-router-dom';
 import Router from './routers';
 
-// import './assets/iconfont/iconfont.css';
+import './assets/iconfont/iconfont.css';
 // import './assets/iconfont/iconfont.js';
 
 

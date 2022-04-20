@@ -10,17 +10,17 @@ export default function Router() {
     const {search} = useLocation()
     const navigate = useNavigate()
     const params = qs.parse(search.split('?')[1])
-    console.log(params)
+    
     useEffect(() => {
-        // const {code, state} = params
-        // if (code && state) {
+        if (!localStorage.getItem('token')) {
             login()
-        // }
+        }
     }, [])
     // const team_id = search.split(':')[1]
 
     const login = async() => {
         const {code, state} = params
+        if (!code || !state) return 
         const res = await noteService.accountLogin({code, state});
         if (res.code === 0) {
             localStorage.setItem('token', res.data.token)

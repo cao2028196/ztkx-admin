@@ -1,5 +1,5 @@
 import { Table, Input, Button, Select, Message, Modal, Form } from '@arco-design/web-react';
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
 import './index.less';
 import noteService from '../../../service/note';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,7 @@ const options = [
     { name: '全部成员可编辑', value: 'w' },
 ];
 
-function AddTeam({ ...props }) {
+function TransferTeam({ ...props }) {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
@@ -22,37 +22,35 @@ function AddTeam({ ...props }) {
     const [keyword, setKeyword] = useState('');
     const n = 10;
     let onScrollLoad = true;
-    
-    const onSubmit = async (v: { perm: string; name: any; uid: any; }) => {
+    const onSubmit = async (v) => {
         // const param = { type: 'public', ...v };
         const perm = v.perm === 'aa' ? '' : v.perm;
         props.setVisible(false)
-        const res = await noteService.teamCreate({type: 'public', name: v.name, perm, uid: v.uid});
-        console.log(res)
+        const res = await noteService.teamModify({team_id: props.action.team_id, name: v.name});
         if (res.code === 0) {
             props.getTeamList()
-            Message.success('创建团队成功');
+            Message.success('编辑团队成功');
             form.resetFields()
         } else {
-            Message.error('创建团队失败');
+            Message.error('编辑团队失败');
         }
     };
 
-    const onSearchUsers = async (keyword: SetStateAction<string> | undefined = '') => {
+    const onSearchUsers = async () => {
         setUserList([]);
         setKeyword(keyword);
-        const {code, data} = await noteService.userSearch({ p: 1, n, keyword });
+        const {code, data} = await noteService.teamMemberList({ p: 1, n, team_id: props.action.team_id });
         if (code === 0) {
             setUserList(data.list);
         }
     };
 
-    const popupScrollHandler = async (el: { scrollTop: any; scrollHeight: any; clientHeight: any; }) => {
+    const popupScrollHandler = async (el) => {
         const { scrollTop, scrollHeight, clientHeight } = el;
         const scrollBottom = scrollHeight - (scrollTop + clientHeight);
         if (scrollBottom < 10 && onScrollLoad) {
             onScrollLoad = false;
-            const {code, data} = await noteService.userSearch({ p: p + 1, n, keyword });
+            const {code, data} = await noteService.teamMemberList({ p: p + 1, n, team_id: props.action.team_id });
             if (code === 0) {
                 setP(p + 1);
                 const arr = userList.concat(data.list);
@@ -66,11 +64,10 @@ function AddTeam({ ...props }) {
 
     useEffect(() => {
         onSearchUsers()
-    }, [])
-
+    }, [props.action])
     return (
         <Modal
-            title="添加团队"
+            title="编辑团队"
             visible={props.visible}
             onCancel={() => {
                 props.setVisible(false);
@@ -80,26 +77,33 @@ function AddTeam({ ...props }) {
         >
             <Form
                 form={form}
+                layout="vertical"
                 onSubmit={(v) => {
                     onSubmit(v);
                 }}
             >
                 <FormItem
                     field="name"
+                    label="团队名称"
                     rules={[
                         { required: true, message: '请输入团队名称' },
-                        { maxLength: 20, message: '团队名称不得超过20字符' },
                     ]}
                     wrapperCol={{ span: 24 }}
+                    initialValue={props.action.name}
                 >
                     <Input
-                        placeholder="请输入团队名称"
+                        placeholder="请输入团队名称" 
                         autoComplete="off"
                     />
                 </FormItem>
-                <FormItem
+
+                {/* <FormItem
                     field="perm"
-                    rules={[{ required: true, message: '请选择初始页面权限' }]}
+                    label="初始页面权限"
+                    rules={[
+                        { required: true, message: '请输入初始页面权限' },
+                    ]}
+                    initialValue={props.action.perm}
                     wrapperCol={{ span: 24 }}
                 >
                     <Select
@@ -111,9 +115,11 @@ function AddTeam({ ...props }) {
                             </Option>
                         ))}
                     </Select>
-                </FormItem>
-                <FormItem
-                    field="uid"
+                </FormItem> */}
+
+                {/* <FormItem
+                    field="receive"
+                    label="团队名称"
                     rules={[
                         { required: true, message: '请输入团队拥有者' },
                     ]}
@@ -127,12 +133,12 @@ function AddTeam({ ...props }) {
                         onSearch={onSearchUsers}
                         getPopupContainer={(node) => node}
                     >
-                        {userList?.map((d:any) => (
-                            <Option key={d.uid} value={d.uid}>
-                                {d.name}
+                        {userList?.map((d) => (
+                            <Option key={d.user_id} value={d.user_id}>
+                                {d.nick}
                             </Option>))}
                     </Select>
-                </FormItem>
+                </FormItem> */}
                 <div className="creat-space-footer-button">
                     {/* <Button type="outline">重新选择</Button> */}
                     <Button type="primary" htmlType="submit">
@@ -144,4 +150,4 @@ function AddTeam({ ...props }) {
     );
 }
 
-export default AddTeam;
+export default TransferTeam;

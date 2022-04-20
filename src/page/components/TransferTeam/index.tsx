@@ -6,14 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const FormItem = Form.Item;
 const { Option } = Select;
-const options = [
-    { name: '全部成员仅可编辑查看本人创建页面', value: 'aa' },
-    { name: '全部成员可查看', value: 'r' },
-    { name: '全部成员可阅读', value: 'l' },
-    { name: '全部成员可编辑', value: 'w' },
-];
 
-function TransferTeam({ ...props }) {
+function EditorTeam({ ...props }) {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
@@ -98,7 +92,7 @@ function TransferTeam({ ...props }) {
                 >
                     <Select
                         placeholder="请输入团队拥有者"
-                        showSearch
+                        // showSearch
                         filterOption={false}
                         onPopupScroll={popupScrollHandler}
                         onSearch={onSearchUsers}
@@ -121,4 +115,4 @@ function TransferTeam({ ...props }) {
     );
 }
 
-export default TransferTeam;
+export default EditorTeam;

@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import noteService from '../../service/note';
 import AddTeam from '../components/AddTeam';
 import TransferTeam from '../components/TransferTeam';
+import EditorTeam from '../components/EditorTeam';
 
 import './index.less';
 // import styles from './styles.module.less';
@@ -37,8 +38,8 @@ const SpaceUsers = () => {
 
 
     const [data, setData] = useState([]);
-    const [roles, setRoles] = useState([]);
     const [teamVisible, setTeamVisible] = useState(false);
+    const [editorVisible, setEditorVisible] = useState(false);
     const [transferVisible, setTransferVisible] = useState(false);
     const [page, setPage] = useState(1);
     const [transferAction, setTransferAction] = useState({});
@@ -47,19 +48,22 @@ const SpaceUsers = () => {
         total: 0,
         pageSize: 10,
         current: 1,
+        showTotal: true,
+        sizeCanChange: true,
+        showJumper: true,
     });
 
     useEffect(() => {
         getTeamList();
-    }, [page]);
+    }, [page, pagination.pageSize]);
 
     const getTeamList = async () => {
         const res = await noteService.teamList({
-            n: 10,
+            n: pagination.pageSize,
             p: page,
         });
         if (res.code === 0 && res?.data?.list) {
-            const arr = res.data.list.map((d) => {
+            const arr = res.data.list.map((d: { profile: { school_name: any; specialty_name: any; position_name: any; }; }) => {
                 return {
                     ...d,
                     school_name: d.profile?.school_name,
@@ -78,23 +82,27 @@ const SpaceUsers = () => {
     };
 
 
-    const onChangeTable = async (pagination) => {
+    const onChangeTable = async (pagination: { current: any; pageSize: any; }) => {
         const { current, pageSize } = pagination;
+        setPagination((pagination) => ({
+            ...pagination,
+            pageSize,
+        }));
         setPage(current);
     };
 
     const columns = [
         {
             title: '序号',
-            render: (col, item, index) => {
-                return index
+            render: (col: any, item: any, index: any) => {
+                return index+1
             }
         },
         {
             title: '团队名称',
             dataIndex: 'name',
-            width: 300,
-            render: (col, record) => {
+            width: 250,
+            render: (col: any, record: { name: any; }) => {
                 const text = record?.name;
                 return (
                     <Tooltip position="top" trigger="hover" content={text}>
@@ -123,25 +131,30 @@ const SpaceUsers = () => {
         {
             title: '团队成员数',
             dataIndex: 'total',
-            render: (col, record) => {
+            render: (col: any, record: { team_id: any; total: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
                 return <div style={{cursor: 'pointer', color: '#0675DB'}} onClick={() => navigate(`/team-users?team_id:${record.team_id}`, {state: record})}>{record.total}</div>
             }
         },
         {
             title: '操作',
             dataIndex: 'op',
-            render: (col, record) => (
+            render: (col: any, record: any) => (
                 <div className="option-btn">
-                    {/* <span className="option-btn-normal" onClick={() => editorTeam(record)}>
+                    <span className="option-btn-normal" onClick={() => editorTeam(record)}>
                         编辑
-                    </span> */}
+                    </span>
                     <span className="option-btn-delete" onClick={() => transferTeam(record)}>移交</span>
                 </div>
             ),
         },
     ];
 
-    const transferTeam = async (record) => {
+    const editorTeam = async (record: React.SetStateAction<{}>) => {
+        setEditorVisible(true);
+        setTransferAction(record);
+    };
+
+    const transferTeam = async (record: React.SetStateAction<{}>) => {
         setTransferVisible(true);
         setTransferAction(record);
     };
@@ -151,7 +164,7 @@ const SpaceUsers = () => {
                 <div className="space-page-title">团队管理</div>
 
                 <div className="space-block-title">团队列表</div>
-                <div className="space-user-form-list">
+                <div>
                     <div className="space-user-form">
                         <div className="space-user-form-add">
                             <Button type="primary" onClick={() => setTeamVisible(true)}>
@@ -225,12 +238,18 @@ const SpaceUsers = () => {
                     setVisible={setTeamVisible}
                     getTeamList={getTeamList}
                 />
-                <TransferTeam
+                {transferVisible&&<TransferTeam
                     visible={transferVisible}
                     setVisible={setTransferVisible}
                     getTeamList={getTeamList}
                     action={transferAction}
-                />
+                />}
+                {editorVisible&&<EditorTeam
+                    visible={editorVisible}
+                    setVisible={setEditorVisible}
+                    getTeamList={getTeamList}
+                    action={transferAction}
+                />}
             </Spin>
         </div>
     );
