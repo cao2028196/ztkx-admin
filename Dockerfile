@@ -20,6 +20,6 @@ COPY . .
 ARG BRANCH=$BRANCH
 RUN yarn build:${BRANCH}
 
-# FROM nginx:1.21-alpine as nginx
-# ADD nginx/default.conf /etc/nginx/conf.d/default.conf
-# COPY --from=builder /node/packages/web/dist /app
+FROM nginx:1.21-alpine as nginx
+ADD nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /build/dist /app
