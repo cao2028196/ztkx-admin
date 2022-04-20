@@ -9,7 +9,6 @@ const MenuItem = Menu.Item;
 const Sider = () => {
     const navigate = useNavigate();
     const routerList = () => {
-        // console.log(router)
         return router.filter(d => d.hiddenMenu).map(d => <MenuItem key={d.path}>{d.name}</MenuItem>)
     }
     const collapsed = /mobile/i.test(navigator.userAgent)

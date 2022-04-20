@@ -18,7 +18,6 @@ function AddTeamUsers({ team, ...props }) {
     };
 
     const onUpload = async (files:any) => {
-        console.log(files)
         if (files[0].status === 'uploading') {
             const formData = new FormData();
             formData.append('file', files[0].originFile);
