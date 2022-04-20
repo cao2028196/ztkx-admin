@@ -72,6 +72,12 @@ deploy_test:
         - docker pull tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
         - docker-compose down
         - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose up -d
+
+deploy_master:
+    stage: deploy
+    only:
+      - master
+    trigger: internal/note-admin
 #deploy_publish:
 #  stage: deploy
 #  only:
