@@ -18,10 +18,8 @@ build:
     script:
         - yarn install
         - yarn build:${CI_COMMIT_REF_NAME}
-        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
-    # after_script:
-    #   - docker rmi $(docker images -f dangling=true -q)
 
 build_release:
     stage: build
@@ -34,7 +32,7 @@ build_release:
     script:
         - yarn install
         - yarn build
-        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
 
 deploy_develop:
