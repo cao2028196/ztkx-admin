@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:14-alpine as builder
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -21,5 +21,5 @@ ARG BRANCH=$BRANCH
 RUN yarn build:${BRANCH}
 
 FROM nginx:1.21-alpine as nginx
-ADD nginx/default.conf /etc/nginx/conf.d/default.conf
+ADD nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /build/dist /app
