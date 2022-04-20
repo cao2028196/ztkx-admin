@@ -108,7 +108,8 @@ export default defineConfig(({ command, mode }) => {
     }
 
     return {
-        base: mode === 'production' ? base : '/',
+        // base: mode === 'production' ? base : '/',
+        base: '/',
         ...common,
         plugins: _plugins,
         build: {
