@@ -68,7 +68,7 @@ deploy_test:
         - cp docker-compose*.yml /opt/${CI_PROJECT_NAME}/
         - cd /opt/${CI_PROJECT_NAME}
         - docker pull tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
-        - docker-compose down
+        - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose down
         - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose up -d
 
 deploy_master:
