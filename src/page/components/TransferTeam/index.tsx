@@ -1,5 +1,6 @@
-import { Table, Input, Button, Select, Message, Modal, Form } from '@arco-design/web-react';
+import { Button, Select, Message, Modal, Form } from '@arco-design/web-react';
 import { useState, useEffect } from 'react';
+import { TeamAvatar } from '../../../components/Avatar';
 import './index.less';
 import noteService from '../../../service/note';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const FormItem = Form.Item;
 const { Option } = Select;
 
-function EditorTeam({ ...props }) {
+function TransferTeam({ ...props }) {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
@@ -16,8 +17,8 @@ function EditorTeam({ ...props }) {
     const [keyword, setKeyword] = useState('');
     const n = 10;
     let onScrollLoad = true;
+    console.log(props)
     const onSubmit = async (v) => {
-        // const param = { type: 'public', ...v };
         const perm = v.perm === 'aa' ? '' : v.perm;
         props.setVisible(false)
         const res = await noteService.teamTransfer({team_id: props.action.team_id, receive: v.receive, owner: props.action.uid});
@@ -69,50 +70,63 @@ function EditorTeam({ ...props }) {
                 props.setVisible(false);
             }}
             footer={null}
-            style={{ width: '400px' }}
+            style={{ width: '520px' }}
         >
-            <Form
-                form={form}
-                onSubmit={(v) => {
-                    onSubmit(v);
-                }}
-            >
-                <div className='team-name'>
-                    团队名称：{props.action.name}
+            <div className='space-user' style={{minWidth: '200', padding: '0'}}>
+                <div className="space-name" style={{marginBottom: '20px'}}>
+                    <div className="space-name-pic">
+                            <TeamAvatar
+                                size={36}
+                                src={props?.action?.icon}
+                                alt={props?.action?.icon_name}
+                                id={props?.action?.team_id}
+                                className="team-avatar"
+                            />
+                    </div>
+                    <div>{props?.action?.name}</div>
                 </div>
-                <div>
+                <div className='space-describe'>
                     每个团队只有1位所有者，移交后原超级管理员将变为管理员
                 </div>
-                <FormItem
-                    field="receive"
-                    rules={[
-                        { required: true, message: '请输入团队拥有者' },
-                    ]}
-                    wrapperCol={{ span: 24 }}
+                <Form
+                    form={form}
+                    onSubmit={(v) => {
+                        onSubmit(v);
+                    }}
                 >
-                    <Select
-                        placeholder="请输入团队拥有者"
-                        // showSearch
-                        filterOption={false}
-                        onPopupScroll={popupScrollHandler}
-                        onSearch={onSearchUsers}
-                        getPopupContainer={(node) => node}
+                    
+                    <FormItem
+                        field="receive"
+                        rules={[
+                            { required: true, message: '请输入团队拥有者' },
+                        ]}
+                        wrapperCol={{ span: 24 }}
                     >
-                        {userList?.map((d) => (
-                            <Option key={d.user_id} value={d.user_id}>
-                                {d.nick}
-                            </Option>))}
-                    </Select>
-                </FormItem>
-                <div className="creat-space-footer-button">
-                    {/* <Button type="outline">重新选择</Button> */}
-                    <Button type="primary" htmlType="submit">
-                        确认
-                    </Button>
-                </div>
-            </Form>
+                        <div className='form-lable-weight'>移交至</div>
+                        <Select
+                            placeholder="请输入团队拥有者"
+                            // showSearch
+                            filterOption={false}
+                            onPopupScroll={popupScrollHandler}
+                            onSearch={onSearchUsers}
+                            getPopupContainer={(node) => node}
+                        >
+                            {userList?.map((d) => (
+                                <Option key={d.user_id} value={d.user_id}>
+                                    {d.nick}
+                                </Option>))}
+                        </Select>
+                    </FormItem>
+                    <div className="creat-space-footer-button">
+                        {/* <Button type="outline">重新选择</Button> */}
+                        <Button type="primary" htmlType="submit">
+                            确认
+                        </Button>
+                    </div>
+                </Form>
+            </div>
         </Modal>
     );
 }
 
-export default EditorTeam;
+export default TransferTeam;

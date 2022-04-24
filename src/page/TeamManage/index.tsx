@@ -29,7 +29,7 @@ type transferAction = {
     specialty_name?: string;
     user_id?: string;
 };
-const SpaceUsers = () => {
+const TeamManage = () => {
     const navigate = useNavigate();
     const team = {}
     
@@ -272,4 +272,4 @@ const SpaceUsers = () => {
     );
 };
 
-export default SpaceUsers;
+export default TeamManage;

@@ -225,7 +225,7 @@ const SpaceUsers = () => {
     return (
         <div className="space-user">
             <Spin loading={team === null} style={{ width: '100%' }}>
-            <div className="space-page-title">成员管理</div>
+                <div className="space-page-title">成员管理</div>
                 <div className="space-name">
                     <div className="space-name-pic">
                             <TeamAvatar
