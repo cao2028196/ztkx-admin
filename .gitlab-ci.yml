@@ -16,8 +16,6 @@ build:
         - shell
         - develop
     script:
-        - yarn install
-        - yarn build:${CI_COMMIT_REF_NAME}
         - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
 
@@ -30,8 +28,6 @@ build_release:
         - shell
         - develop
     script:
-        - yarn install
-        - yarn build
         - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
 
