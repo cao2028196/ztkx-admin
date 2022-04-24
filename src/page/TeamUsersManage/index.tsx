@@ -15,6 +15,7 @@ import { TeamAvatar } from '../../components/Avatar';
 import noteService from '../../service/note';
 import AddTeamUser from '../components/AddTeamUser';
 import AddTeamUsers from '../components/AddTeamUsers';
+import ChangeOwner from '../components/ChangeOwner';
 import './index.less';
 // import styles from './styles.module.less';
 // import { useCurrentTeam } from '@/hooks/useCurrentTeam';
@@ -37,8 +38,13 @@ const SpaceUsers = () => {
     const team_id = search.split(':')[1]
     const team: any = {team_id}
     const [data, setData] = useState([]);
+    const [phone, setPhone] = useState('');
+    const [nick, setNick] = useState('');
+    const [role, setRole] = useState();
+      
     // const [roles, setRoles] = useState([]);
     const [teamUserVisible, setTeamUserVisible] = useState(false);
+    const [changeOwnerVisible, setChangeOwnerVisible] = useState(false);
     const [teamUsersVisible, setTeamUsersVisible] = useState(false);
     const [editorVisible, setEditorVisible] = useState(false);
     const [page, setPage] = useState(1);
@@ -55,8 +61,8 @@ const SpaceUsers = () => {
     }, [team_id, page]);
 
     useEffect(() => {
-        // getTeamList();
-    }, []);
+        setPage(1);
+    }, [phone, nick, role,]);
 
     // const getTeamRoles = async () => {
     //     const res = await noteService.getTeamRoles();
@@ -69,7 +75,10 @@ const SpaceUsers = () => {
         const res = await noteService.teamMemberList({
             n: 10,
             p: page,
-            team_id: team_id
+            team_id: team_id,
+            phone,
+            nick,
+            role,
         });
         if (res.code === 0 && res?.data?.list) {
             const arr = res.data.list.map((d: any) => {
@@ -155,9 +164,9 @@ const SpaceUsers = () => {
                     <span className="option-btn-normal" onClick={() => editorUser(record)}>
                         编辑
                     </span>
-                    {/* <Popconfirm title="确定要从团队删除此成员?" onOk={() => removeRow(record)}>
+                    <Popconfirm title="确定要从团队删除此成员?" onOk={() => removeRow(record)}>
                         <span className="option-btn-delete">移除</span>
-                    </Popconfirm> */}
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -171,18 +180,32 @@ const SpaceUsers = () => {
         setEditorRole(record.role);
         setEditorAction(record);
     };
-    // const removeRow = async (record) => {
-    //     if (record.role === 100) {
-    //         Message.info('不可移除');
-    //         return;
-    //     }
-    //     const res = await noteService.teamMemberRemove({
-    //         team_id: team.team_id,
-    //         uid: record.user_id,
-    //     });
-    //     getTeamUserList();
-    //     Message.info(res.msg);
-    // };
+    const removeRow = async (record) => {
+        if (record.role === 100) {
+            Message.info('不可移除');
+            return;
+        }
+
+        const res = await noteService.teamBlocks({
+            team_id,
+            owner: record.user_id
+        })
+        if (res.code === 0) {
+            if (res.data.blocks) {
+                // 如果有笔记，选择管理员继承笔记
+                setChangeOwnerVisible(true)
+            }else {
+                const res = await noteService.teamMemberRemove({
+                    team_id: team.team_id,
+                    uid: record.user_id,
+                });
+                getTeamUserList();
+                Message.info(res.msg);
+            }
+        }
+
+        
+    };
 
     const submitEditor = async () => {
         const res = await noteService.teamMemberModify({
@@ -228,7 +251,7 @@ const SpaceUsers = () => {
                                 批量添加
                             </Button>
                         </div>
-                        {/* <div className="space-user-form-list">
+                        <div className="space-user-form-list">
                             <div>
                                 <span>手机号</span>
                                 <span>
@@ -276,7 +299,7 @@ const SpaceUsers = () => {
                                     搜索
                                 </Button>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="space-user-list">
                         <Table
@@ -289,19 +312,25 @@ const SpaceUsers = () => {
                         />
                     </div>
                 </div>
-                <AddTeamUser
+                {teamUserVisible && <AddTeamUser
                     team={team}
                     visible={teamUserVisible}
                     setVisible={setTeamUserVisible}
                     getTeamUserList={getTeamUserList}
                     roleList={roles}
-                />
-                <AddTeamUsers
+                />}
+                {teamUsersVisible && <AddTeamUsers
                     team={team}
                     visible={teamUsersVisible}
                     setVisible={setTeamUsersVisible}
                     getTeamUserList={getTeamUserList}
-                />
+                />}
+                {changeOwnerVisible && <ChangeOwner
+                    team={team}
+                    visible={changeOwnerVisible}
+                    setVisible={setChangeOwnerVisible}
+                    getTeamUserList={getTeamUserList}
+                />}
                 <Modal
                     title="编辑信息"
                     visible={editorVisible}
@@ -330,24 +359,6 @@ const SpaceUsers = () => {
                             <Input value={editorAction.inviter} disabled />
                         </div>
                     </div>
-                    {/* <div className="team-user-item">
-                        <div className="team-user-item-title">身份</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.identity_name} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">学校</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.school_name} disabled />
-                        </div>
-                    </div>
-                    <div className="team-user-item">
-                        <div className="team-user-item-title">专业</div>
-                        <div className="team-user-item-content">
-                            <Input value={editorAction.specialty_name} disabled />
-                        </div>
-                    </div> */}
                     <div className="team-user-item">
                         <div className="team-user-item-title">权限</div>
                         <div className="team-user-item-content">

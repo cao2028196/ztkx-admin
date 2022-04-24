@@ -51,6 +51,13 @@ export class Note extends Client {
         return await http.post(this.url('teamModify'), JSON.stringify(params));
     };
     /**
+     * 禁用团队
+     * @returns
+     */
+     teamStatus = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamStatus'), JSON.stringify(params));
+    };
+    /**
      * 查询所有用户
      * @returns
      */
@@ -79,10 +86,24 @@ export class Note extends Client {
         return await http.post(this.url('teamMemberModify'), JSON.stringify(params));
     };
     /**
+     * 团队成员是否有笔记
+     * @returns
+     */
+     teamBlocks = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamBlocks'), JSON.stringify(params));
+    };
+    /**
+     * 团队管理员与超级管理员列表 
+     * @returns
+     */
+     teamManagers = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamManagers'), JSON.stringify(params));
+    };
+    /**
      * 移除团队成员
      * @returns
      */
-    //  teamMemberModify = async (params): Promise<JsonResponse> => {
-    //     return await http.post(this.url('teamMemberModify'), JSON.stringify(params));
-    // };
+     teamMemberRemove = async (params): Promise<JsonResponse> => {
+        return await http.post(this.url('teamMemberRemove'), JSON.stringify(params));
+    };
 }

@@ -17,16 +17,13 @@ import TransferTeam from '../components/TransferTeam';
 import EditorTeam from '../components/EditorTeam';
 
 import './index.less';
-// import styles from './styles.module.less';
-// import { useCurrentTeam } from '@/hooks/useCurrentTeam';
-// import { useUserContextValue } from '@/layout/WorkspaceLayout/contexts';
 const Option = Select.Option;
 
 type transferAction = {
     identity_name?: string;
     inviter?: string;
     nick?: string;
-    phone?: string;
+    team_name?: string;
     profile?: string;
     school_name?: string;
     specialty_name?: string;
@@ -35,8 +32,9 @@ type transferAction = {
 const SpaceUsers = () => {
     const navigate = useNavigate();
     const team = {}
-
-
+    
+    const [teamName, setTeamName] = useState('');
+    const [managerName, setManagerName] = useState('');
     const [data, setData] = useState([]);
     const [teamVisible, setTeamVisible] = useState(false);
     const [editorVisible, setEditorVisible] = useState(false);
@@ -57,10 +55,16 @@ const SpaceUsers = () => {
         getTeamList();
     }, [page, pagination.pageSize]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [teamName, managerName]);
+
     const getTeamList = async () => {
         const res = await noteService.teamList({
             n: pagination.pageSize,
             p: page,
+            team_name: teamName,
+            manager_name: managerName,
         });
         if (res.code === 0 && res?.data?.list) {
             const arr = res.data.list.map((d: { profile: { school_name: any; specialty_name: any; position_name: any; }; }) => {
@@ -124,6 +128,10 @@ const SpaceUsers = () => {
             dataIndex: 'nick_name',
         },
         {
+            title: '超管手机号',
+            dataIndex: 'phone',
+        },
+        {
             title: '创建时间',
             dataIndex: 'created_at',
         },
@@ -137,14 +145,26 @@ const SpaceUsers = () => {
         {
             title: '操作',
             dataIndex: 'op',
-            render: (col: any, record: any) => (
-                <div className="option-btn">
-                    <span className="option-btn-normal" onClick={() => editorTeam(record)}>
-                        编辑
-                    </span>
-                    <span className="option-btn-delete" onClick={() => transferTeam(record)}>移交</span>
-                </div>
-            ),
+            render: (col: any, record: any) => {
+                let disable = record.status === 1 ? false : true;
+                return (
+                    <div className="option-btn">
+                        <span className="option-btn-normal" onClick={() => editorTeam(record)}>
+                            编辑
+                        </span>
+                        <span className="option-btn-delete" onClick={() => transferTeam(record)}>移交</span>
+                        <Popconfirm title={`确定要${disable ? '启用' : '禁用'}团队?`} onOk={() => disableTeam(record)}>
+                            <span
+                                className="option-btn-delete"
+                                style={{color: disable ? 'rgba(0, 0, 0, 0.24)' : 'rgba(0, 0, 0, 0.88)'}}
+                            >
+                                {disable ? '禁用' : '启用'}
+                            </span>
+                        </Popconfirm>
+                        
+                    </div>
+                )
+            },
         },
     ];
 
@@ -157,6 +177,22 @@ const SpaceUsers = () => {
         setTransferVisible(true);
         setTransferAction(record);
     };
+
+    const disableTeam = async (record: any) => {
+        const res = await noteService.teamStatus({
+            team_id: record.team_id,
+            status: record.status === 1 ? -1 : 1
+        })
+        if (res.code === 0) {
+            getTeamList();
+        }
+        
+    };
+
+    const onSubmit = () => {
+        getTeamList();
+    };
+
     return (
         <div className="space-user">
             <Spin loading={team === null} style={{ width: '100%' }}>
@@ -171,47 +207,29 @@ const SpaceUsers = () => {
                                 创建团队
                             </Button>
                         </div>
-                        {/* <div className="space-user-form-list">
+                        <div className="space-user-form-list">
                             <div>
-                                <span>手机号</span>
+                                <span>团队名称</span>
                                 <span>
                                     <Input
                                         allowClear
-                                        style={{ width: 240, height: 32 }}
-                                        placeholder="请输入手机号"
-                                        value={phone}
-                                        onChange={(val) => setPhone(val)}
+                                        style={{ width: 180, height: 32 }}
+                                        placeholder="请输入团队名称"
+                                        value={teamName}
+                                        onChange={(val) => setTeamName(val)}
                                     />
                                 </span>
                             </div>
                             <div>
-                                <span>用户名</span>
+                                <span>管理员手机或名称</span>
                                 <span>
                                     <Input
                                         allowClear
-                                        style={{ width: 120, height: 32 }}
-                                        placeholder="请输入昵称"
-                                        value={nick}
-                                        onChange={(val) => setNick(val)}
+                                        style={{ width: 180, height: 32 }}
+                                        placeholder="请输入管理员手机或名称"
+                                        value={managerName}
+                                        onChange={(val) => setManagerName(val)}
                                     />
-                                </span>
-                            </div>
-                            <div>
-                                <span>权限</span>
-                                <span>
-                                    <Select
-                                        allowClear
-                                        placeholder="请选择权限"
-                                        style={{ width: 120, height: 32 }}
-                                        value={role}
-                                        onChange={(val) => setRole(val)}
-                                    >
-                                        {roles.map((d) => (
-                                            <Option key={d.key} value={d.key}>
-                                                {d.value}
-                                            </Option>
-                                        ))}
-                                    </Select>
                                 </span>
                             </div>
                             <div className="creat-space-footer-button">
@@ -219,7 +237,7 @@ const SpaceUsers = () => {
                                     搜索
                                 </Button>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="space-user-list">
                         <Table
