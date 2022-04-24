@@ -16,12 +16,8 @@ build:
         - shell
         - develop
     script:
-        - yarn install
-        - yarn build:${CI_COMMIT_REF_NAME}
-        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
-    # after_script:
-    #   - docker rmi $(docker images -f dangling=true -q)
 
 build_release:
     stage: build
@@ -32,9 +28,7 @@ build_release:
         - shell
         - develop
     script:
-        - yarn install
-        - yarn build
-        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} .
+        - docker build -t tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} --build-arg BRANCH=${CI_COMMIT_REF_NAME} .
         - docker push tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
 
 deploy_develop:
@@ -58,19 +52,19 @@ deploy_test:
     only:
         - test
     tags:
-        # - deploy
-        # - qcloud
-        # - test
-        - docker
-        - shell
+        - deploy
+        - qcloud
         - test
+        # - docker
+        # - shell
+        # - test
 
     script:
         - mkdir -p /opt/${CI_PROJECT_NAME}/logs && mkdir -p /opt/${CI_PROJECT_NAME}/config
         - cp docker-compose*.yml /opt/${CI_PROJECT_NAME}/
         - cd /opt/${CI_PROJECT_NAME}
         - docker pull tcr.kxsz.net/web/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
-        - docker-compose down
+        - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose down
         - IMAGETAG=${CI_COMMIT_REF_NAME} docker-compose up -d
 
 deploy_master:
