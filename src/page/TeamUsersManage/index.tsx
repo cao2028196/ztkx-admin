@@ -260,7 +260,7 @@ const SpaceUsers = () => {
                                         style={{ width: 240, height: 32 }}
                                         placeholder="请输入手机号"
                                         value={phone}
-                                        onChange={(val) => setPhone(val)}
+                                        onChange={(val) => setPhone(val ? val.toString() : '')}
                                     />
                                 </span>
                             </div>
