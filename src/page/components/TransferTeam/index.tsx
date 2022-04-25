@@ -109,7 +109,7 @@ function TransferTeam({ ...props }) {
                             filterOption={false}
                             onPopupScroll={popupScrollHandler}
                             onSearch={onSearchUsers}
-                            getPopupContainer={(node) => node}
+                            // getPopupContainer={(node) => node}
                         >
                             {userList?.map((d) => (
                                 <Option key={d.user_id} value={d.user_id}>
