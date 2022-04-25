@@ -28,7 +28,6 @@ function AddTeam({ ...props }) {
         const perm = v.perm === 'aa' ? '' : v.perm;
         props.setVisible(false)
         const res = await noteService.teamCreate({type: 'public', name: v.name, perm, uid: v.uid});
-        console.log(res)
         if (res.code === 0) {
             props.getTeamList()
             Message.success('创建团队成功');
