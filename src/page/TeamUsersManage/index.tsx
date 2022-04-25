@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Input,
     Select,
@@ -8,7 +8,7 @@ import {
     Modal,
     Message,
     Spin,
-    Tooltip,
+    InputNumber,
 } from '@arco-design/web-react';
 import { useLocation } from 'react-router-dom';
 import { TeamAvatar } from '../../components/Avatar';
@@ -256,8 +256,7 @@ const SpaceUsers = () => {
                             <div>
                                 <span>手机号</span>
                                 <span>
-                                    <Input
-                                        allowClear
+                                    <InputNumber
                                         style={{ width: 240, height: 32 }}
                                         placeholder="请输入手机号"
                                         value={phone}
