@@ -193,14 +193,15 @@ const SpaceUsers = () => {
         if (res.code === 0) {
             if (res.data.blocks) {
                 // 如果有笔记，选择管理员继承笔记
+                setEditorAction(record);
                 setChangeOwnerVisible(true)
             }else {
-                const res = await noteService.teamMemberRemove({
-                    team_id: team.team_id,
-                    uid: record.user_id,
+                const resp = await noteService.teamMemberRemove({
+                    team_id,
+                    owner: record.user_id,
                 });
                 getTeamUserList();
-                Message.info(res.msg);
+                Message.info(resp.msg);
             }
         }
 
@@ -330,6 +331,7 @@ const SpaceUsers = () => {
                     visible={changeOwnerVisible}
                     setVisible={setChangeOwnerVisible}
                     getTeamUserList={getTeamUserList}
+                    editorAction={editorAction}
                 />}
                 <Modal
                     title="编辑信息"

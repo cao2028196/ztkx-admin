@@ -1,11 +1,11 @@
-import {  Modal, Radio } from '@arco-design/web-react';
+import {  Modal, Radio, Message } from '@arco-design/web-react';
 import { useState, useEffect, SetStateAction } from 'react';
 import './index.less';
 import noteService from '../../../service/note';
 
 const RadioGroup = Radio.Group;
 
-function ChangeOwner({ team, ...props }) {
+function ChangeOwner({ team, editorAction, ...props }) {
     const [selected, setSelected] = useState('');
     const [teamManagers, setTeamManagers] = useState([]);
 
@@ -22,9 +22,16 @@ function ChangeOwner({ team, ...props }) {
         }
     }
 
-    const changeOwner = () => {
+    const changeOwner = async() => {
         console.log(selected)
+        const resp = await noteService.teamMemberRemove({
+            team_id: team.team_id,
+            owner: editorAction.user_id,
+            receive: selected,
+        });
+        props.getTeamUserList();
         props.setVisible(false);
+        Message.info(resp.msg);
     }
     return (
         <Modal
