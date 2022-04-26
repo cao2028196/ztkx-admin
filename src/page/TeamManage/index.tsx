@@ -112,7 +112,7 @@ const TeamManage = () => {
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
-                                maxWidth: '350px',
+                                maxWidth: '150px',
                             }}
                         >
                             {text}
@@ -124,6 +124,23 @@ const TeamManage = () => {
         {
             title: '超管用户名',
             dataIndex: 'nick_name',
+            render: (col: any, record: { nick_name: any; }) => {
+                const text = record?.nick_name;
+                return (
+                    <Tooltip position="top" trigger="hover" content={text}>
+                        <div
+                            style={{
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                maxWidth: '150px',
+                            }}
+                        >
+                            {text}
+                        </div>
+                    </Tooltip>
+                );
+            },
         },
         {
             title: '超管手机号',
@@ -157,6 +174,7 @@ const TeamManage = () => {
         {
             title: '操作',
             dataIndex: 'op',
+            width: 200,
             render: (col: any, record: any) => {
                 let disable = record.status === 1 ? false : true;
                 return (
