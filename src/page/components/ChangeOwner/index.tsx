@@ -23,14 +23,20 @@ function ChangeOwner({ team, editorAction, ...props }) {
     }
 
     const changeOwner = async() => {
+        if (!selected) {
+            Message.info('请在以下人员中选择一位继承您的团队笔记');
+            return;
+        }
         const resp = await noteService.teamMemberRemove({
             team_id: team.team_id,
             owner: editorAction.user_id,
             receive: selected,
         });
-        props.getTeamUserList();
-        props.setVisible(false);
-        Message.info(resp.msg);
+        if (resp.code === 0) {
+            props.getTeamUserList();
+            props.setVisible(false);
+            Message.info(resp.msg);
+        }
     }
     return (
         <Modal

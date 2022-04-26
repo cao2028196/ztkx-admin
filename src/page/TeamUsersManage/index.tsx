@@ -200,8 +200,11 @@ const SpaceUsers = () => {
                     team_id,
                     owner: record.user_id,
                 });
-                getTeamUserList();
-                Message.info(resp.msg);
+                if (resp.code === 0) {
+                    getTeamUserList();
+                    Message.info(resp.msg);
+                }
+                
             }
         }
 
