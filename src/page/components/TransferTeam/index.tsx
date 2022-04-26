@@ -83,7 +83,7 @@ function TransferTeam({ ...props }) {
                                 className="team-avatar"
                             />
                     </div>
-                    <div>{props?.action?.name}</div>
+                    <div className="space-name-text">{props?.action?.name}</div>
                 </div>
                 <div className='space-describe'>
                     每个团队只有1位所有者，移交后原超级管理员将变为管理员
