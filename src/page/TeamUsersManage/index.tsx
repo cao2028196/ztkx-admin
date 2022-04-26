@@ -257,6 +257,7 @@ const SpaceUsers = () => {
                                 <span>手机号</span>
                                 <span>
                                     <InputNumber
+                                        hideControl
                                         style={{ width: 240, height: 32 }}
                                         placeholder="请输入手机号"
                                         value={phone}

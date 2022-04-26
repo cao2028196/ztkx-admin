@@ -17,20 +17,23 @@ function TransferTeam({ ...props }) {
     const [keyword, setKeyword] = useState('');
     const n = 10;
     let onScrollLoad = true;
-    console.log(props)
-    const onSubmit = async (v) => {
-        const perm = v.perm === 'aa' ? '' : v.perm;
-        props.setVisible(false)
-        const res = await noteService.teamTransfer({team_id: props.action.team_id, receive: v.receive, owner: props.action.uid});
-        if (res.code === 0) {
-            props.getTeamList()
-            Message.success('移交团队成功');
-            form.resetFields()
-        } else {
-            Message.error('移交团队失败');
-        }
+    const onSubmit = async () => {
+        form.validate(async (errors, values) => {
+            console.log(errors, values)
+            if (!errors) {
+                props.setVisible(false)
+                const res = await noteService.teamTransfer({team_id: props.action.team_id, receive: values.receive, owner: props.action.uid});
+                if (res.code === 0) {
+                    props.getTeamList()
+                    Message.success('移交团队成功');
+                    form.resetFields()
+                } else {
+                    Message.error('移交团队失败');
+                }
+            }
+        })
+        
     };
-
     const onSearchUsers = async () => {
         setUserList([]);
         setKeyword(keyword);
@@ -83,18 +86,15 @@ function TransferTeam({ ...props }) {
                                 className="team-avatar"
                             />
                     </div>
-                    <div>{props?.action?.name}</div>
+                    <div className="space-name-text">{props?.action?.name}</div>
                 </div>
                 <div className='space-describe'>
                     每个团队只有1位所有者，移交后原超级管理员将变为管理员
                 </div>
                 <Form
                     form={form}
-                    onSubmit={(v) => {
-                        onSubmit(v);
-                    }}
                 >
-                    
+                    <div className='form-lable-weight'>移交至</div>
                     <FormItem
                         field="receive"
                         rules={[
@@ -102,7 +102,6 @@ function TransferTeam({ ...props }) {
                         ]}
                         wrapperCol={{ span: 24 }}
                     >
-                        <div className='form-lable-weight'>移交至</div>
                         <Select
                             placeholder="请输入团队拥有者"
                             // showSearch
@@ -119,7 +118,7 @@ function TransferTeam({ ...props }) {
                     </FormItem>
                     <div className="creat-space-footer-button">
                         {/* <Button type="outline">重新选择</Button> */}
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" onClick={onSubmit}>
                             确认
                         </Button>
                     </div>
