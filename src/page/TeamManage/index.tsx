@@ -141,6 +141,20 @@ const TeamManage = () => {
             }
         },
         {
+            title: '状态',
+            dataIndex: 'status',
+            render: (col: any, record: any) => {
+                let disable = record.status === 1 ? false : true;
+                return (
+                    <span
+                        style={{color: disable ? 'rgba(245, 63, 63, 1)' : 'rgba(0, 0, 0, 0.88)'}}
+                    >
+                        {disable ? '已禁用' : '已启用'}
+                    </span>
+                )
+            },
+        },
+        {
             title: '操作',
             dataIndex: 'op',
             render: (col: any, record: any) => {
@@ -154,9 +168,9 @@ const TeamManage = () => {
                         <Popconfirm title={`确定要${disable ? '启用' : '禁用'}团队?`} onOk={() => disableTeam(record)}>
                             <span
                                 className="option-btn-delete"
-                                style={{color: disable ? 'rgba(0, 0, 0, 0.24)' : 'rgba(0, 0, 0, 0.88)'}}
+                                style={{color: disable ? 'rgba(6, 117, 219, 1)' : 'rgba(245, 63, 63, 1)'}}
                             >
-                                {disable ? '禁用' : '启用'}
+                                {disable ? '启用' : '禁用'}
                             </span>
                         </Popconfirm>
                         
