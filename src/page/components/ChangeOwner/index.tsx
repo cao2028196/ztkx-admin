@@ -23,7 +23,6 @@ function ChangeOwner({ team, editorAction, ...props }) {
     }
 
     const changeOwner = async() => {
-        console.log(selected)
         const resp = await noteService.teamMemberRemove({
             team_id: team.team_id,
             owner: editorAction.user_id,
