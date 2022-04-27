@@ -323,12 +323,12 @@ const SpaceUsers = () => {
                     getTeamUserList={getTeamUserList}
                     roleList={roles}
                 />}
-                {teamUsersVisible && <AddTeamUsers
+                <AddTeamUsers
                     team={team}
                     visible={teamUsersVisible}
                     setVisible={setTeamUsersVisible}
                     getTeamUserList={getTeamUserList}
-                />}
+                />
                 {changeOwnerVisible && <ChangeOwner
                     team={team}
                     visible={changeOwnerVisible}

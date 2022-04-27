@@ -138,7 +138,7 @@ function AddTeamUsers({ team, ...props }) {
                             条记录
                         </div>
                         <div>
-                            {resultData?.errorList && <Table columns={columns} data={resultData?.errorList} />}
+                            {resultData?.errorList && <Table rowKey="line" columns={columns} data={resultData?.errorList} />}
                         </div>
                     </div>
                 )}
