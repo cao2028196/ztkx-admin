@@ -27,6 +27,10 @@ function ChangeOwner({ team, editorAction, ...props }) {
             Message.info('请在以下人员中选择一位继承您的团队笔记');
             return;
         }
+        if (editorAction.user_id === selected) {
+            Message.info('不能移交自己')
+            return;
+        }
         const resp = await noteService.teamMemberRemove({
             team_id: team.team_id,
             owner: editorAction.user_id,
