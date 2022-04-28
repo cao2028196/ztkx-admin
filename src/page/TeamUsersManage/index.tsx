@@ -329,13 +329,13 @@ const SpaceUsers = () => {
                     setVisible={setTeamUsersVisible}
                     getTeamUserList={getTeamUserList}
                 />
-                <ChangeOwner
+                {changeOwnerVisible&&<ChangeOwner
                     team={team}
                     visible={changeOwnerVisible}
                     setVisible={setChangeOwnerVisible}
                     getTeamUserList={getTeamUserList}
                     editorAction={editorAction}
-                />
+                />}
                 <Modal
                     title="编辑信息"
                     visible={editorVisible}
