@@ -36,6 +36,8 @@ function ChangeOwner({ team, editorAction, ...props }) {
             props.getTeamUserList();
             props.setVisible(false);
             Message.info(resp.msg);
+        }else {
+            Message.info(resp.msg);
         }
     }
     return (
