@@ -3,15 +3,11 @@ import { useState, useEffect, SetStateAction } from 'react';
 import './index.less';
 import noteService from '../../../service/note';
 import { useNavigate } from 'react-router-dom';
+import { teamPermList } from '@/utils/common';
 
 const FormItem = Form.Item;
 const { Option } = Select;
-const options = [
-    { name: '全部成员仅可编辑查看本人创建页面', value: 'aa' },
-    { name: '全部成员可查看', value: 'r' },
-    { name: '全部成员可阅读', value: 'l' },
-    { name: '全部成员可编辑', value: 'w' },
-];
+
 
 function AddTeam({ ...props }) {
     const navigate = useNavigate();
@@ -104,7 +100,7 @@ function AddTeam({ ...props }) {
                     <Select
                         placeholder="请选择初始页面权限"
                     >
-                        {options.map((option) => (
+                        {teamPermList.map((option) => (
                             <Option key={option.value} value={option.value}>
                                 {option.name}
                             </Option>
