@@ -243,7 +243,7 @@ const SpaceUsers = () => {
                     <div>{state?.name}</div>
                 </div>
 
-                <div className="space-block-title">成员列表</div>
+                <div className="space-block-title">成员列表（{pagination.total}）</div>
                 <div>
                     <div className="space-user-form">
                         <div className="space-user-form-add">
