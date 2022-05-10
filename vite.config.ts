@@ -58,7 +58,7 @@ const common = {
         // https: {
         // },
         proxy: {
-            '/api/': 'http://note.dev.kxsz.net',
+            '/api/': 'http://note.test.kxsz.net',
         },
     },
     resolve: {

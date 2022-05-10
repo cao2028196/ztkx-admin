@@ -21,7 +21,7 @@ function AddTeam({ ...props }) {
     
     const onSubmit = async (v: { perm: string; name: any; uid: any; }) => {
         // const param = { type: 'public', ...v };
-        const perm = v.perm === 'aa' ? '' : v.perm;
+        const perm = v.perm === 'all' ? '' : v.perm;
         props.setVisible(false)
         const res = await noteService.teamCreate({type: 'public', name: v.name, perm, uid: v.uid});
         if (res.code === 0) {
